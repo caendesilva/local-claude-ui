@@ -52,7 +52,6 @@
 <textarea id="user-input" placeholder="Type your message here..."></textarea>
 <button id="send-button">Send</button>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
 <script>
     const apiKeyInput = document.getElementById('api-key');
     const modelSelect = document.getElementById('model-select');
@@ -93,19 +92,26 @@
         conversation.push({ role: 'user', content: userMessage });
 
         try {
-            const response = await axios.post('https://api.anthropic.com/v1/messages', {
-                model: modelSelect.value,
-                messages: conversation,
-                max_tokens: 1000,
-            }, {
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'x-api-key': apiKeyInput.value,
                     'anthropic-version': '2023-06-01'
-                }
+                },
+                body: JSON.stringify({
+                    model: modelSelect.value,
+                    messages: conversation,
+                    max_tokens: 1000,
+                })
             });
 
-            const assistantMessage = response.data.content[0].text;
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const assistantMessage = data.content[0].text;
             addMessageToChat('assistant', assistantMessage);
             conversation.push({ role: 'assistant', content: assistantMessage });
         } catch (error) {
