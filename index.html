@@ -38,94 +38,94 @@
     </style>
 </head>
 <body>
-    <h1>Simple Claude Chat Interface</h1>
-    <label for="api-key">API Key:</label>
-    <input type="password" id="api-key" placeholder="Enter your Anthropic API key">
-    <label for="model-select">Select Model:</label>
-    <select id="model-select">
-        <option value="claude-3-opus-20240229">claude-3-opus-20240229</option>
-        <option value="claude-3-sonnet-20240229">claude-3-sonnet-20240229</option>
-        <option value="claude-2.1">claude-2.1</option>
-        <option value="claude-instant-1.2">claude-instant-1.2</option>
-    </select>
-    <div id="chat-container"></div>
-    <textarea id="user-input" placeholder="Type your message here..."></textarea>
-    <button id="send-button">Send</button>
+<h1>Simple Claude Chat Interface</h1>
+<label for="api-key">API Key:</label>
+<input type="password" id="api-key" placeholder="Enter your Anthropic API key">
+<label for="model-select">Select Model:</label>
+<select id="model-select">
+    <option value="claude-3-opus-20240229">claude-3-opus-20240229</option>
+    <option value="claude-3-sonnet-20240229">claude-3-sonnet-20240229</option>
+    <option value="claude-2.1">claude-2.1</option>
+    <option value="claude-instant-1.2">claude-instant-1.2</option>
+</select>
+<div id="chat-container"></div>
+<textarea id="user-input" placeholder="Type your message here..."></textarea>
+<button id="send-button">Send</button>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
-    <script>
-        const apiKeyInput = document.getElementById('api-key');
-        const modelSelect = document.getElementById('model-select');
-        const chatContainer = document.getElementById('chat-container');
-        const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button');
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script>
+    const apiKeyInput = document.getElementById('api-key');
+    const modelSelect = document.getElementById('model-select');
+    const chatContainer = document.getElementById('chat-container');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
 
-        let conversation = [];
+    let conversation = [];
 
-        // Load preferences from localStorage
-        apiKeyInput.value = localStorage.getItem('apiKey') || '';
-        modelSelect.value = localStorage.getItem('selectedModel') || 'claude-3-opus-20240229';
+    // Load preferences from localStorage
+    apiKeyInput.value = localStorage.getItem('apiKey') || '';
+    modelSelect.value = localStorage.getItem('selectedModel') || 'claude-3-opus-20240229';
 
-        // Save preferences to localStorage
-        apiKeyInput.addEventListener('change', () => {
-            localStorage.setItem('apiKey', apiKeyInput.value);
-        });
+    // Save preferences to localStorage
+    apiKeyInput.addEventListener('change', () => {
+        localStorage.setItem('apiKey', apiKeyInput.value);
+    });
 
-        modelSelect.addEventListener('change', () => {
-            localStorage.setItem('selectedModel', modelSelect.value);
-        });
+    modelSelect.addEventListener('change', () => {
+        localStorage.setItem('selectedModel', modelSelect.value);
+    });
 
-        sendButton.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        async function sendMessage() {
-            const userMessage = userInput.value.trim();
-            if (!userMessage) return;
-
-            addMessageToChat('user', userMessage);
-            userInput.value = '';
-
-            conversation.push({ role: 'user', content: userMessage });
-
-            try {
-                const response = await axios.post('https://api.anthropic.com/v1/messages', {
-                    model: modelSelect.value,
-                    messages: conversation,
-                    max_tokens: 1000,
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': apiKeyInput.value,
-                        'anthropic-version': '2023-06-01'
-                    }
-                });
-
-                const assistantMessage = response.data.content[0].text;
-                addMessageToChat('assistant', assistantMessage);
-                conversation.push({ role: 'assistant', content: assistantMessage });
-            } catch (error) {
-                console.error('Error:', error);
-                addMessageToChat('assistant', 'An error occurred. Please check your API key and try again.');
-            }
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
         }
+    });
 
-        function addMessageToChat(role, content) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', role);
-            messageElement.textContent = `${role === 'user' ? 'You' : 'Claude'}: ${content}`;
-            chatContainer.appendChild(messageElement);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
+    async function sendMessage() {
+        const userMessage = userInput.value.trim();
+        if (!userMessage) return;
 
-        // Check if the page is being accessed from localhost
-        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.hostname !== 'claude.test') {
-            document.body.innerHTML = '<h1>Access Denied</h1><p>This page can only be accessed from localhost.</p>';
+        addMessageToChat('user', userMessage);
+        userInput.value = '';
+
+        conversation.push({ role: 'user', content: userMessage });
+
+        try {
+            const response = await axios.post('https://api.anthropic.com/v1/messages', {
+                model: modelSelect.value,
+                messages: conversation,
+                max_tokens: 1000,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKeyInput.value,
+                    'anthropic-version': '2023-06-01'
+                }
+            });
+
+            const assistantMessage = response.data.content[0].text;
+            addMessageToChat('assistant', assistantMessage);
+            conversation.push({ role: 'assistant', content: assistantMessage });
+        } catch (error) {
+            console.error('Error:', error);
+            addMessageToChat('assistant', 'An error occurred. Please check your API key and try again.');
         }
-    </script>
+    }
+
+    function addMessageToChat(role, content) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', role);
+        messageElement.textContent = `${role === 'user' ? 'You' : 'Claude'}: ${content}`;
+        chatContainer.appendChild(messageElement);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    // Check if the page is being accessed from localhost
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.hostname !== 'claude.test') {
+        document.body.innerHTML = '<h1>Access Denied</h1><p>This page can only be accessed from localhost.</p>';
+    }
+</script>
 </body>
 </html>
