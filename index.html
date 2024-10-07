@@ -49,14 +49,16 @@
     <option value="claude-instant-1.2">claude-instant-1.2</option>
 </select>
 <div id="chat-container"></div>
-<textarea id="user-input" placeholder="Type your message here..."></textarea>
+<input type="file" id="file-input" multiple>
+<div id="file-info"></div>
 <button id="send-button">Send</button>
 
 <script>
     const apiKeyInput = document.getElementById('api-key');
     const modelSelect = document.getElementById('model-select');
     const chatContainer = document.getElementById('chat-container');
-    const userInput = document.getElementById('user-input');
+    const fileInput = document.getElementById('file-input');
+    const fileInfo = document.getElementById('file-info');
     const sendButton = document.getElementById('send-button');
 
     let conversation = [];
@@ -75,10 +77,15 @@
     });
 
     sendButton.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
+
+    fileInput.addEventListener('change', (e) => {
+        fileInfo.innerHTML = ''; // Clear previous file info
+        const files = e.target.files;
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const info = document.createElement('p');
+            info.textContent = `File ${i + 1}: ${file.name} (${file.size} bytes)`;
+            fileInfo.appendChild(info);
         }
     });
 
