@@ -49,7 +49,7 @@
     <option value="claude-3-haiku-20240307">claude-3-haiku-20240307</option>
 </select>
 <div id="chat-container"></div>
-<input type="text" id="user-input" placeholder="Type your message here">
+<textarea id="user-input" placeholder="Type your message here..."></textarea>
 <input type="file" id="file-input" multiple>
 <div id="file-info"></div>
 <button id="send-button">Send</button>
@@ -58,6 +58,7 @@
     const apiKeyInput = document.getElementById('api-key');
     const modelSelect = document.getElementById('model-select');
     const chatContainer = document.getElementById('chat-container');
+    const userInput = document.getElementById('user-input');
     const fileInput = document.getElementById('file-input');
     const fileInfo = document.getElementById('file-info');
     const sendButton = document.getElementById('send-button');
@@ -78,7 +79,14 @@
     });
 
     sendButton.addEventListener('click', sendMessage);
-
+    
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
     fileInput.addEventListener('change', (e) => {
         fileInfo.innerHTML = ''; // Clear previous file info
         const files = e.target.files;
