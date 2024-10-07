@@ -43,10 +43,10 @@
 <input type="password" id="api-key" placeholder="Enter your Anthropic API key">
 <label for="model-select">Select Model:</label>
 <select id="model-select">
+    <option value="claude-3-5-sonnet-20240620">claude-3-5-sonnet-20240620</option>
     <option value="claude-3-opus-20240229">claude-3-opus-20240229</option>
     <option value="claude-3-sonnet-20240229">claude-3-sonnet-20240229</option>
-    <option value="claude-2.1">claude-2.1</option>
-    <option value="claude-instant-1.2">claude-instant-1.2</option>
+    <option value="claude-3-haiku-20240307">claude-3-haiku-20240307</option>
 </select>
 <div id="chat-container"></div>
 <input type="file" id="file-input" multiple>
@@ -65,7 +65,7 @@
 
     // Load preferences from localStorage
     apiKeyInput.value = localStorage.getItem('apiKey') || '';
-    modelSelect.value = localStorage.getItem('selectedModel') || 'claude-3-opus-20240229';
+    modelSelect.value = localStorage.getItem('selectedModel') || 'claude-3-haiku-20240307';
 
     // Save preferences to localStorage
     apiKeyInput.addEventListener('change', () => {
