@@ -79,7 +79,7 @@
     });
 
     sendButton.addEventListener('click', sendMessage);
-    
+
     userInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
@@ -111,9 +111,13 @@
             const response = await fetch('https://api.anthropic.com/v1/messages', {
                 method: 'POST',
                 headers: {
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET,PATCH",
                     'Content-Type': 'application/json',
                     'x-api-key': apiKeyInput.value,
-                    'anthropic-version': '2023-06-01'
+                    'anthropic-version': '2023-06-01',
+                    'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify({
                     model: modelSelect.value,
